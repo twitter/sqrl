@@ -52,7 +52,6 @@ export default class Semaphore extends EventEmitter {
         isPromise(promise),
         "Semaphore withLock coroutine must return a promise"
       );
-      // Bluebird just required for `.finally`. Can get rid of it later.
       return promiseFinally(promise, () => {
         this.decrement();
       });
@@ -65,7 +64,6 @@ export default class Semaphore extends EventEmitter {
       "Cannot use wrap if semaphore has a max (might block)"
     );
     this.increment();
-    // Bluebird just required for `.finally`. Can get rid of it later.
     return promiseFinally(promise, () => {
       this.decrement();
     });
