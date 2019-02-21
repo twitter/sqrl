@@ -3,8 +3,9 @@
  * Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-import { SqrlFunctionRegistry } from "./FunctionRegistry";
 
+import { AstTypes as AT } from "../ast/AstTypes";
+import { SqrlFunctionRegistry } from "./FunctionRegistry";
 import { SqrlObject } from "../object/SqrlObject";
 
 function and(...args) {
@@ -71,6 +72,18 @@ export function registerBoolFunctions(registry: SqrlFunctionRegistry) {
       stateArg: true,
       safe: true,
       asyncSafe: true
+    }
+  );
+
+  registry.save(
+    function isNull(value) {
+      return value === null;
+    },
+    {
+      allowNull: true,
+      args: [AT.any],
+      argstring: "value",
+      docstring: "Returns true if the given value is null, false otherwise"
     }
   );
 

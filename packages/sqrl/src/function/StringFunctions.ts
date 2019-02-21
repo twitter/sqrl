@@ -76,6 +76,18 @@ export function registerStringFunctions(registry: SqrlFunctionRegistry) {
   );
 
   registry.save(
+    function escapeRegex(state, str) {
+      return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    },
+    {
+      args: [AT.state, AT.any.string],
+      argstring: "value",
+      docstring:
+        "Encodes special characters in the given string for use in a regular expression"
+    }
+  );
+
+  registry.save(
     function split(string, by) {
       if (typeof string !== "string" || typeof by !== "string") {
         return null;
@@ -248,15 +260,6 @@ export function registerStringFunctions(registry: SqrlFunctionRegistry) {
       return SqrlAst.call("_charGrams", ast.args);
     }
   });
-
-  registry.save(
-    function escapeRegex(state, str) {
-      return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-    },
-    {
-      args: [AT.state, AT.any.string]
-    }
-  );
 
   // TODO: could precompile these regexes at parse time
   registry.save(
