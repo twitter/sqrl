@@ -79,14 +79,15 @@ Usage:
   sqrl [options] test <filename>
 
 Options:
-  --color=<when>         Force color in ouput. When can be \`never\`, \`always\`, or \`auto\`.
-  --stream=<feature>     Stream inputs to the given feature from stdin as newline seperated json
-  --require=<package>    Require packages that contain SQRL functions
-  --concurrency=<N>      Limit actions processed in parallel [default: 50]
-  --compiled             Read compiled SQRL rather than source
-  --only-blocked         Only show blocked actions
-  --redis=<address>      Address of redis server
-  --output=<output>      Output format [default: pretty]
+  --color=<when>           Force color in ouput. When can be \`never\`, \`always\`, or \`auto\`.
+  --stream=<feature>       Stream inputs to the given feature from stdin as newline seperated json
+  --require=<package>      Require packages that contain SQRL functions
+  --concurrency=<N>        Limit actions processed in parallel [default: 50]
+  --compiled               Read compiled SQRL rather than source
+  --only-blocked           Only show blocked actions
+  --redis=<address>        Address of redis server
+  --output=<output>        Output format [default: pretty]
+  --skip-default-requires  Do not include bundled SQRL functions
 `;
 
 export const defaultCliArgs: CliArgs = {
@@ -112,6 +113,7 @@ export interface CliArgs {
   "--compiled"?: boolean;
   "--output": string;
   "--concurrency": string;
+  "--skip-default-requires"?: boolean;
 }
 
 export class CliError extends Error {
@@ -268,14 +270,15 @@ async function buildFunctionRegistry(
 
   const functionRegistry = SQRL.buildFunctionRegistry(services);
 
-  // @TODO: Need to work on how these additional functions get loaded
-  if (options.redisAddress) {
-    // @TODO: shutdown.push(services);
-    registerRedis(functionRegistry, buildServices(options.redisAddress));
-  } else {
-    registerRedis(functionRegistry, buildServicesWithMockRedis());
+  if (!args["--skip-default-requires"]) {
+    if (options.redisAddress) {
+      // @TODO: shutdown.push(services);
+      registerRedis(functionRegistry, buildServices(options.redisAddress));
+    } else {
+      registerRedis(functionRegistry, buildServicesWithMockRedis());
+    }
+    await requirePackage("sqrl-text-functions", functionRegistry);
   }
-  await requirePackage("sqrl-text-functions", functionRegistry);
 
   if (args["--require"]) {
     // Register each package in order
