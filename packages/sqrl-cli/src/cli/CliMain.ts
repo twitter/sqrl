@@ -59,7 +59,6 @@ import { SimpleContext } from "sqrl/lib/platform/Trace";
 import { readFile } from "fs";
 import { promisify } from "util";
 import { Readable, Writable } from "stream";
-import { register as registerTextFunctions } from "sqrl-text-functions";
 import { CloseableGroup } from "../jslib/Closeable";
 
 // tslint:disable-next-line:no-duplicate-imports
@@ -82,6 +81,7 @@ Usage:
 Options:
   --color=<when>         Force color in ouput. When can be \`never\`, \`always\`, or \`auto\`.
   --stream=<feature>     Stream inputs to the given feature from stdin as newline seperated json
+  --require=<package>    Require packages that contain SQRL functions
   --concurrency=<N>      Limit actions processed in parallel [default: 50]
   --compiled             Read compiled SQRL rather than source
   --only-blocked         Only show blocked actions
@@ -108,6 +108,7 @@ export interface CliArgs {
   "<feature>": string[];
   "<key=value>": string[];
   "--redis"?: string;
+  "--require"?: string; // @todo: would be great if this could be specified multiple times
   "--compiled"?: boolean;
   "--output": string;
   "--concurrency": string;
@@ -123,6 +124,12 @@ export class CliError extends Error {
   ) {
     super(message);
     this.suggestion = options.suggestion || null;
+  }
+}
+
+function cliInvariant(condition: boolean, message: string) {
+  if (!condition) {
+    throw new CliError(message);
   }
 }
 
@@ -225,15 +232,27 @@ class CliAssertService implements AssertService {
   }
 }
 
-function buildFunctionRegistry(
+async function requirePackage(
+  name: string,
+  functionRegistry: FunctionRegistry
+) {
+  const imported = await import(name);
+  cliInvariant(
+    typeof imported.register === "function",
+    "Required package did not include a `register` function: " + name
+  );
+  await imported.register(functionRegistry);
+}
+
+async function buildFunctionRegistry(
   args: CliArgs,
   options: {
     redisAddress?: string;
   }
-): {
+): Promise<{
   functionRegistry: FunctionRegistry;
   services: FunctionServices;
-} {
+}> {
   let redisServices: RedisServices;
   if (options.redisAddress) {
     redisServices = buildServices(options.redisAddress);
@@ -256,7 +275,14 @@ function buildFunctionRegistry(
   } else {
     registerRedis(functionRegistry, buildServicesWithMockRedis());
   }
-  registerTextFunctions(functionRegistry);
+  await requirePackage("sqrl-text-functions", functionRegistry);
+
+  if (args["--require"]) {
+    // Register each package in order
+    for (const name of args["--require"].split(",")) {
+      await requirePackage(name, functionRegistry);
+    }
+  }
 
   return { functionRegistry, services };
 }
@@ -289,7 +315,7 @@ export async function cliMain(
     const { filesystem, source } = await sourceOptionsFromPath(
       args["<filename>"]
     );
-    const { functionRegistry, services } = buildFunctionRegistry(args, {
+    const { functionRegistry, services } = await buildFunctionRegistry(args, {
       redisAddress
     });
     if (options.registerFunctions) {
@@ -318,7 +344,9 @@ export async function cliMain(
   ) {
     const ctx = defaultTrc;
 
-    const { functionRegistry } = buildFunctionRegistry(args, { redisAddress });
+    const { functionRegistry } = await buildFunctionRegistry(args, {
+      redisAddress
+    });
     if (options.registerFunctions) {
       options.registerFunctions(functionRegistry);
     }
