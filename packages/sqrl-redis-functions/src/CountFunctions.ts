@@ -28,7 +28,7 @@ import {
   AliasedFeature
 } from "./parser/sqrlRedis";
 
-const NODE_TYPE = "Counter";
+const ENTITY_TYPE = "Counter";
 
 export const TIMESPAN_CONFIG = {
   lastHour: {
@@ -185,7 +185,7 @@ function interpretCountArgs(
 
   const { entityAst, entityId } = state.addHashedEntity(
     sourceAst,
-    NODE_TYPE,
+    ENTITY_TYPE,
     counterProps
   );
 

@@ -36,7 +36,7 @@ test("works with in", async () => {
   Let IgnoreStrings := ["3", "4", "5"];
 
   # This makes sure the second part of the AND is not optimized to parallel,
-  # and that nodes work within sequences
+  # and that entities work within sequences
   LET A := [
     X FOR X IN SequenceA
     WHERE entity("Machine", X) IN SequenceB AND NOT X In IgnoreStrings

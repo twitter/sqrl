@@ -696,7 +696,7 @@ export class SqrlParserState extends SqrlParseInfo {
 
   counterEntity(
     sourceAst: Ast,
-    nodeType: string,
+    entityType: string,
     props: {
       [key: string]: any;
     }
@@ -704,8 +704,8 @@ export class SqrlParserState extends SqrlParseInfo {
     entityId: EntityId;
     entityAst: SlotAst;
   } {
-    const nodeKey = murmurhashJsonHexSync(props);
-    const entityId = new EntityId(nodeType, nodeKey);
+    const entityKey = murmurhashJsonHexSync(props);
+    const entityId = new EntityId(entityType, entityKey);
     const entityAst = this.constantEntityAst(
       sourceAst,
       entityId.type,

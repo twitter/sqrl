@@ -116,7 +116,7 @@ export class CompileState {
    */
   addHashedEntity(
     sourceAst: Ast,
-    nodeType: string,
+    entityType: string,
     props: {
       [key: string]: any;
     }
@@ -124,7 +124,7 @@ export class CompileState {
     entityId: EntityId;
     entityAst: SlotAst;
   } {
-    return this._wrapped.counterEntity(sourceAst, nodeType, props);
+    return this._wrapped.counterEntity(sourceAst, entityType, props);
   }
 
   /**

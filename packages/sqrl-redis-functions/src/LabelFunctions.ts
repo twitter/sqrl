@@ -67,12 +67,12 @@ export function registerLabelFunctions(
     async function removeLabel(
       state: Execution,
       cause: WhenCause,
-      nodes: SqrlEntity | SqrlEntity[],
+      entities: SqrlEntity | SqrlEntity[],
       label: string
     ) {
-      ensureArray(nodes).forEach(node => {
-        if (node !== null) {
-          service.removeLabel(state.manipulator, node, label, cause);
+      ensureArray(entities).forEach(entity => {
+        if (entity !== null) {
+          service.removeLabel(state.manipulator, entity, label, cause);
         }
       });
     },
