@@ -32,7 +32,7 @@ function arrayMath(callback, values, defaultValue = null) {
 
 export function registerMathFunctions(registry: SqrlFunctionRegistry) {
   const safeMathOpts = {
-    argCount: 2,
+    args: [AT.any, AT.any],
     pure: true,
     safe: true
   };
@@ -176,11 +176,7 @@ export function registerMathFunctions(registry: SqrlFunctionRegistry) {
       }
       return left / right;
     },
-    Object.assign({}, safeMathOpts, {
-      stateArg: true,
-      argCount: 3,
-      pure: false
-    })
+    { ...safeMathOpts, args: [AT.state, AT.any, AT.any], pure: false }
   );
 
   registry.save(sha256HexSync, {
