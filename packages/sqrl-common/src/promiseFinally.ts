@@ -5,7 +5,7 @@
  */
 /***
  * This implements https://github.com/tc39/proposal-promise-finally
- * Once our minimum Node.JS version meets this bar we can start using it.
+ * Once our minimum Entity.JS version meets this bar we can start using it.
  */
 
 export function promiseFinally<T>(

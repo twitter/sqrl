@@ -64,7 +64,7 @@ LET SqrlIsClassify := true;
 LET SomeCondition := true;
 
 LET UserGeneratedTextTriGrams := [
-  node("TriGrams", "a trending trigram"),
+  entity("TriGrams", "a trending trigram"),
 ];
 
 # One bump from standard count to show they use same keys
