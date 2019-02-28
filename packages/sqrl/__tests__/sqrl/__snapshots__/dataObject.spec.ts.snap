@@ -65,7 +65,7 @@ Object {
   "SqrlAssertionStatements": "function() {
   const p0 = bluebird.resolve(true);
   return this.load(
-    \`21:function() {
+    \`20:function() {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -76,7 +76,7 @@ Object {
     )
   );
 }\`,
-    \`22:function() {
+    \`21:function() {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -87,7 +87,7 @@ Object {
     )
   );
 }\`,
-    \`23:function() {
+    \`22:function() {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -98,7 +98,7 @@ Object {
     )
   );
 }\`,
-    \`24:function() {
+    \`23:function() {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -109,7 +109,7 @@ Object {
     )
   );
 }\`,
-    \`25:function() {
+    \`24:function() {
   const p0 = bluebird.resolve(\\"=\\");
   const p1 = bluebird.resolve({ a: 6 });
   const p2 = bluebird.resolve(
@@ -128,9 +128,6 @@ Object {
   return bluebird.resolve(true);
 }",
   "SqrlIsClassify": "function() {
-  return bluebird.resolve(true);
-}",
-  "SqrlLogStatements": "function() {
   return bluebird.resolve(true);
 }",
   "SqrlMutate": "function() {

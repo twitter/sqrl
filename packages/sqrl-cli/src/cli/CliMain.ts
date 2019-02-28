@@ -255,26 +255,20 @@ async function buildInstance(
   };
   const functionRegistry = SQRL.buildFunctionRegistry({ config, services });
 
-  if (!args["--skip-default-requires"]) {
-    await functionRegistry.importFromPackage(
-      "sqrl-redis-functions",
-      await import("sqrl-redis-functions")
-    );
-    await functionRegistry.importFromPackage(
-      "sqrl-text-functions",
-      await import("sqrl-text-functions")
-    );
-    await functionRegistry.importFromPackage(
-      "sqrl-load-functions",
-      await import("sqrl-load-functions")
-    );
-  }
+  const requires = [
+    ...(args["--skip-default-requires"]
+      ? []
+      : [
+          "sqrl-redis-functions",
+          "sqrl-text-functions",
+          "sqrl-load-functions",
+          "sqrl-cli-functions"
+        ]),
+    ...(args["--require"] || "").split(",").filter(v => v)
+  ];
 
-  if (args["--require"]) {
-    // Register each package in order
-    for (const name of args["--require"].split(",")) {
-      await functionRegistry.importFromPackage(name, await import(name));
-    }
+  for (const name of requires) {
+    await functionRegistry.importFromPackage(name, await import(name));
   }
 
   return { functionRegistry };

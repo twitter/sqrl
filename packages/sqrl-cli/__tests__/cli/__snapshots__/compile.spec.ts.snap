@@ -41,6 +41,10 @@ Object {
       "value": true,
     },
     Object {
+      "type": "constant",
+      "value": true,
+    },
+    Object {
       "type": "input",
     },
     Object {
@@ -52,7 +56,7 @@ Object {
               "value": "Hello, ",
             },
             Object {
-              "slot": 9,
+              "slot": 10,
               "type": "value",
             },
             Object {
@@ -65,7 +69,7 @@ Object {
         },
       ],
       "load": Array [
-        9,
+        10,
       ],
       "type": "load",
     },
@@ -79,11 +83,12 @@ Object {
     "SqrlIsClassify",
     "SqrlClock",
     "SqrlExecutionComplete",
-    "SqrlLogStatements",
     "SqrlAssertionStatements",
     "SqrlCountStatements",
     "SqrlCountUniqueStatements",
     "SqrlLabelStatements",
+    "SqrlLogStatements",
+    "SqrlBlockStatements",
     "Name",
     "Text",
     "bool(:)",
