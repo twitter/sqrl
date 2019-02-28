@@ -17,7 +17,6 @@ import { registerDataFunctions } from "./DataFunctions";
 import { registerStringFunctions } from "./StringFunctions";
 import { registerTimeFunctions } from "./TimeFunctions";
 import { registerAssertFunctions } from "./AssertFunctions";
-import { registerLogFunctions } from "./LogFunctions";
 import { registerWhenFunctions } from "./WhenFunctions";
 import { FunctionServices } from "../api/execute";
 
@@ -29,10 +28,6 @@ export function registerAllFunctions(
   registerBoolFunctions(functionRegistry.createStdlibRegistry("bool"));
   registerComparisonFunctions(functionRegistry.createStdlibRegistry("compare"));
   registerMathFunctions(functionRegistry.createStdlibRegistry("math"));
-  registerLogFunctions(
-    functionRegistry.createStdlibRegistry("log"),
-    services.log
-  );
   registerControlFunctions(functionRegistry.createStdlibRegistry("control"));
   registerWhenFunctions(functionRegistry.createStdlibRegistry("when"));
   registerAssertFunctions(

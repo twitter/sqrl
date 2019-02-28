@@ -17,6 +17,7 @@ import {
   AT,
   Execution
 } from "sqrl";
+import * as util from "util";
 import { CliManipulator } from "./CliManipulator";
 import { registerSourceFunction } from "./SourceFunctions";
 import { registerBlockFunctions } from "./BlockFunctions";
@@ -25,6 +26,23 @@ export { CliManipulator } from "./CliManipulator";
 export function register(registry: FunctionRegistry) {
   registerSourceFunction(registry);
   registerBlockFunctions(registry);
+
+  registry.registerStatement(
+    "SqrlLogStatements",
+    async function log(state: Execution, format: string, ...args) {
+      const message = util.format(format, ...args);
+      if (!(state.manipulator instanceof CliManipulator)) {
+        throw new Error("Expected CliManipulator");
+      }
+      state.manipulator.log(message);
+    },
+    {
+      allowNull: true,
+      args: [AT.state, AT.any.string, AT.any.repeated],
+      argstring: "format string, value...",
+      docstring: "Logs a message using sprintf style formatting"
+    }
+  );
 
   registry.registerStatement(
     "SqrlLogStatements",
