@@ -111,7 +111,7 @@ export function registerMathFunctions(registry: StdlibRegistry) {
   );
 
   registry.save(
-    function add(left, right) {
+    function _add(left, right) {
       if (typeof left !== "number" || typeof right !== "number") {
         return null;
       }
@@ -124,7 +124,7 @@ export function registerMathFunctions(registry: StdlibRegistry) {
     }
   );
   registry.save(
-    function subtract(left, right) {
+    function _subtract(left, right) {
       if (typeof left !== "number" || typeof right !== "number") {
         return null;
       }
@@ -137,7 +137,7 @@ export function registerMathFunctions(registry: StdlibRegistry) {
     }
   );
   registry.save(
-    function multiply(left, right) {
+    function _multiply(left, right) {
       if (typeof left !== "number" || typeof right !== "number") {
         return null;
       }
@@ -152,7 +152,7 @@ export function registerMathFunctions(registry: StdlibRegistry) {
 
   // modulo is special due to division by zero error
   registry.save(
-    function modulo(state, left, right) {
+    function _modulo(state, left, right) {
       if (right === 0) {
         state.logError(new Error("Modulo by zero"));
         return null;
@@ -170,7 +170,7 @@ export function registerMathFunctions(registry: StdlibRegistry) {
 
   // Divide is special due to division by zero error
   registry.save(
-    function divide(state, left, right) {
+    function _divide(state, left, right) {
       if (typeof left !== "number" || typeof right !== "number") {
         return null;
       } else if (right === 0) {

@@ -29,7 +29,7 @@ Object {
       \\"a\\",
       functions._createMap(
         \\"c\\",
-        functions.subtract(functions.divide(this, 6, 2), 1)
+        functions._subtract(functions._divide(this, 6, 2), 1)
       )
     )
   );
@@ -102,7 +102,7 @@ Object {
   return bluebird.resolve(
     functions._assertCmp(
       this,
-      functions._createMap(\\"a\\", 9, \\"b\\", functions.divide(this, 6, 2)),
+      functions._createMap(\\"a\\", 9, \\"b\\", functions._divide(this, 6, 2)),
       \\"=\\",
       { a: 9, b: 3 },
       'line 46\\\\\\\\n  ASSERT {\\"a\\": 5 + 4, \\"b\\": Six / 2} = { \\"a\\": 9, \\"b\\": 3 };\\\\\\\\n  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\\\\\\\n'
@@ -149,7 +149,7 @@ Object {
   return bluebird.resolve(
     functions._assertCmp(
       this,
-      functions._createMap(\\"a\\", 9, \\"b\\", functions.divide(this, 6, 2)),
+      functions._createMap(\\"a\\", 9, \\"b\\", functions._divide(this, 6, 2)),
       \\"=\\",
       { a: 9, b: 3 },
       'line 46\\\\n  ASSERT {\\"a\\": 5 + 4, \\"b\\": Six / 2} = { \\"a\\": 9, \\"b\\": 3 };\\\\n  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\\\n'

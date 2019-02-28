@@ -449,7 +449,7 @@ export function registerCountFunctions(
       // weekOverWeek = lastWeek - previousLastWeek
       //              = lastWeek - (lastTwoWeeks - lastWeek)
       //
-      const resultAst = AstBuilder.call("subtract", [
+      const resultAst = AstBuilder.call("_subtract", [
         classifyCountTransform(state, ast, {
           ...args,
           timespan: previousConfig.subtractLeft
@@ -468,7 +468,7 @@ export function registerCountFunctions(
         );
         return AstBuilder.branch(
           // if result < 0
-          AstBuilder.call("cmpL", [subtractionAst, AstBuilder.constant(0)]),
+          AstBuilder.call("_cmpL", [subtractionAst, AstBuilder.constant(0)]),
           // then null
           AstBuilder.constant(null),
           // else result
@@ -484,7 +484,7 @@ export function registerCountFunctions(
       AstBuilder.constant(1),
       AstBuilder.constant(0)
     );
-    const resultAst = AstBuilder.call("add", [
+    const resultAst = AstBuilder.call("_add", [
       hasAlias ? AstBuilder.constant(0) : addAst,
       AstBuilder.call("arrayMax", [
         databaseCountTransform(state, ast, args),
