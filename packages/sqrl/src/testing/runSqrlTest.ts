@@ -13,12 +13,12 @@ import {
   KafkaService
 } from "../function/registerAllFunctions";
 import { SimpleManipulator } from "../simple/SimpleManipulator";
-import { UniqueId, UniqueIdService } from "../api/services";
 import { SimpleBlockService } from "../simple/SimpleBlockService";
-import { Context } from "../api/ctx";
 import { AssertService } from "sqrl-common";
 import { FunctionRegistry } from "../api/execute";
+import { getDefaultConfig, Config } from "../api/config";
 
+/*
 class SimpleId extends UniqueId {
   constructor(private timeMs: number, private remainder: number) {
     super();
@@ -41,7 +41,6 @@ class MockUniqueIdService implements UniqueIdService {
   private db = {};
   private remainder = 0;
   constructor(private time: number) {
-    /* do nothing yet */
   }
   async create(ctx: Context) {
     const remainder = this.remainder;
@@ -56,6 +55,7 @@ class MockUniqueIdService implements UniqueIdService {
     return this.db[type][key];
   }
 }
+*/
 
 class MockKafkaService extends KafkaService {
   constructor(private topic: string) {
@@ -99,9 +99,7 @@ export class SimpleAssertService implements AssertService {
 }
 
 export async function buildTestServices(
-  props: {
-    startMs?: number;
-  } = {}
+  props: {} = {}
 ): Promise<FunctionServices> {
   let assert: AssertService;
   try {
@@ -114,13 +112,13 @@ export async function buildTestServices(
   return {
     assert,
     block: new SimpleBlockService(),
-    saveFeatures: new MockKafkaService("saveFeatures"),
-    uniqueId: new MockUniqueIdService(props.startMs || Date.now())
+    saveFeatures: new MockKafkaService("saveFeatures")
   };
 }
 
 export async function buildTestFunctionRegistry(
   options: {
+    config?: Config;
     services?: FunctionServices;
     functionCost?: FunctionCostData;
   } = {}
@@ -130,5 +128,12 @@ export async function buildTestFunctionRegistry(
   });
   const services = options.services || (await buildTestServices());
   registerAllFunctions(functionRegistry, services);
-  return new FunctionRegistry(functionRegistry);
+  return new FunctionRegistry(
+    {
+      ...getDefaultConfig(),
+      "state.allow-in-memory": true,
+      ...(options.config || {})
+    },
+    functionRegistry
+  );
 }

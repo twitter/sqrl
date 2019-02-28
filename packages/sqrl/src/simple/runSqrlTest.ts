@@ -16,10 +16,12 @@ import { FunctionServices } from "../function/registerAllFunctions";
 import { FunctionRegistry, Execution } from "../api/execute";
 import * as path from "path";
 import { Logger } from "../api/log";
+import { Config } from "../api/config";
 
 export async function runSqrlTest(
   sqrl: string,
   options: {
+    config?: Config;
     functionRegistry?: FunctionRegistry;
     services?: FunctionServices;
     logger?: Logger;
@@ -43,13 +45,16 @@ export async function runSqrlTest(
     functionRegistry = options.functionRegistry;
   } else {
     services = options.services || (await buildTestServices());
-    functionRegistry = await buildTestFunctionRegistry({ services });
+    functionRegistry = await buildTestFunctionRegistry({
+      config: options.config,
+      services
+    });
   }
 
   const filesystem =
     options.filesystem || new LocalFilesystem(path.join(__dirname, ".."));
 
-  const test = new SqrlTest(functionRegistry._wrapped, {
+  const test = new SqrlTest(functionRegistry._functionRegistry, {
     manipulatorFactory: () => new SimpleManipulator(),
     filesystem
   });

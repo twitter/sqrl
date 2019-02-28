@@ -10,7 +10,7 @@ import { runSqrlTest } from "../../src/simple/runSqrlTest";
 
 test("saves features", async () => {
   const functionRegistry = await buildTestFunctionRegistry();
-  registerTestFunctions(functionRegistry._wrapped);
+  registerTestFunctions(functionRegistry._functionRegistry);
   const librarySqrl = `
   LET SqrlOutput := getSqrlOutput(SqrlExecutionComplete);
   LET SqrlKafka := jsonValue(SqrlOutput, '$.kafka');

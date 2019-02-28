@@ -26,16 +26,12 @@ import {
   ExecutableSpec,
   SimpleManipulator,
   SimpleLogService,
-  SimpleBlockService
+  SimpleBlockService,
+  getDefaultConfig,
+  Config
 } from "sqrl";
 import SqrlAst from "sqrl/lib/ast/SqrlAst";
 import { StatementAst } from "sqrl/lib/ast/Ast";
-import {
-  register as registerRedis,
-  buildServices,
-  buildServicesWithMockRedis,
-  RedisServices
-} from "sqrl-redis-functions";
 import { sourceOptionsFromPath } from "sqrl/lib/helpers/CompileHelpers";
 import { createDefaultContext } from "sqrl/lib/helpers/ContextHelpers";
 import { WatchedFilesystem } from "./WatchedFilesystem";
@@ -82,6 +78,7 @@ Usage:
   sqrl [options] help functions
 
 Options:
+  --config=<path>          Load the provided given JSON file as configuration
   --color=<when>           Force color in ouput. When can be \`never\`, \`always\`, or \`auto\`.
   --stream=<feature>       Stream inputs to the given feature from stdin as newline seperated json
   --require=<package>      Require packages that contain SQRL functions
@@ -90,7 +87,7 @@ Options:
   --only-blocked           Only show blocked actions
   --redis=<address>        Address of redis server
   --output=<output>        Output format [default: pretty]
-  --skip-default-requires  Do not include bundled SQRL functions
+  --skip-default-requires  Do not include bundled SQRL function packages
 `;
 
 export const defaultCliArgs: CliArgs = {
@@ -112,6 +109,7 @@ export interface CliArgs {
   "<filename>"?: string;
   "<feature>": string[];
   "<key=value>": string[];
+  "--config"?: string;
   "--redis"?: string;
   "--require"?: string; // @todo: would be great if this could be specified multiple times
   "--compiled"?: boolean;
@@ -234,39 +232,34 @@ async function requirePackage(
     typeof imported.register === "function",
     "Required package did not include a `register` function: " + name
   );
-  await imported.register(functionRegistry.createPackageRegistry(name));
+  await imported.register(functionRegistry.createPackageInstance(name));
 }
 
-async function buildFunctionRegistry(
-  args: CliArgs,
-  options: {
-    redisAddress?: string;
-  }
+async function buildInstance(
+  args: CliArgs
 ): Promise<{
   functionRegistry: FunctionRegistry;
-  services: FunctionServices;
 }> {
-  let redisServices: RedisServices;
-  if (options.redisAddress) {
-    redisServices = buildServices(options.redisAddress);
-  } else {
-    redisServices = buildServicesWithMockRedis();
+  const config: Config = {
+    ...getDefaultConfig(),
+    "state.allow-in-memory": true,
+    ...(args["--config"] ? await readJsonFile(args["--config"]) : {})
+  };
+
+  // Allow the --redis argument to override the config
+  if (args["--redis"]) {
+    config["redis.address"] = args["--redis"];
   }
 
   const services: FunctionServices = {};
   services.assert = new CliAssertService();
   services.block = new SimpleBlockService();
   services.log = new SimpleLogService();
-  services.uniqueId = redisServices.uniqueId;
 
-  const functionRegistry = SQRL.buildFunctionRegistry(services);
+  const functionRegistry = SQRL.buildFunctionRegistry({ config, services });
 
   if (!args["--skip-default-requires"]) {
-    registerRedis(
-      functionRegistry.createPackageRegistry("sqrl-redis-functions"),
-      redisServices
-    );
-
+    await requirePackage("sqrl-redis-functions", functionRegistry);
     await requirePackage("sqrl-text-functions", functionRegistry);
   }
 
@@ -277,7 +270,7 @@ async function buildFunctionRegistry(
     }
   }
 
-  return { functionRegistry, services };
+  return { functionRegistry };
 }
 
 type FunctionRegistrator = (registry: FunctionRegistry) => void;
@@ -302,11 +295,7 @@ export async function cliMain(
     closeables.add(output);
   }
 
-  const redisAddress = args["--redis"] || process.env.SQRL_REDIS;
-
-  const { functionRegistry, services } = await buildFunctionRegistry(args, {
-    redisAddress
-  });
+  const { functionRegistry } = await buildInstance(args);
   if (options.registerFunctions) {
     options.registerFunctions(functionRegistry);
   }
@@ -322,15 +311,16 @@ export async function cliMain(
       args["<filename>"]
     );
 
-    const test = new SqrlTest(functionRegistry._wrapped, {
+    const test = new SqrlTest(functionRegistry._functionRegistry, {
       filesystem,
       manipulatorFactory: () => new SimpleManipulator()
     });
 
-    // Create a new unique id for this test
-    const testId = await services.uniqueId.create(defaultTrc);
+    // @todo: If we're using stateful storage this might cause conflicts
+    const datasetId = "0";
+
     const ctx = new SimpleContext(
-      new SimpleDatabaseSet(testId.getNumberString()),
+      new SimpleDatabaseSet(datasetId),
       getGlobalLogger()
     );
 
@@ -344,9 +334,7 @@ export async function cliMain(
   ) {
     const ctx = defaultTrc;
 
-    const { functionRegistry } = await buildFunctionRegistry(args, {
-      redisAddress
-    });
+    const { functionRegistry } = await buildInstance(args);
     if (options.registerFunctions) {
       options.registerFunctions(functionRegistry);
     }
@@ -431,7 +419,7 @@ export async function cliMain(
         }
       }
 
-      if (compiler && !redisAddress) {
+      if (compiler && !functionRegistry.getConfig()["redis.address"]) {
         for (const func of compiler.getUsedFunctions(ctx)) {
           if (STATEFUL_FUNCTIONS.includes(func)) {
             console.error(
@@ -484,7 +472,7 @@ export async function cliMain(
         ({ filesystem } = await sourceOptionsFromPath(args["<filename>"]));
         statements.push(SqrlAst.include(path.basename(args["<filename>"])));
       }
-      const test = new SqrlTest(functionRegistry._wrapped, {
+      const test = new SqrlTest(functionRegistry._functionRegistry, {
         filesystem,
         manipulatorFactory: () => new SimpleManipulator(),
         inputs

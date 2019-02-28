@@ -25,7 +25,6 @@ import { registerLoadFunctions } from "./LoadFunctions";
 import { registerLogFunctions, LogService } from "./LogFunctions";
 import { registerWhenFunctions } from "./WhenFunctions";
 import { AssertService } from "sqrl-common";
-import { UniqueIdService } from "../api/services";
 
 export abstract class KafkaService {
   abstract writeJson(manipulator: Manipulator, obj: any);
@@ -35,7 +34,6 @@ export interface FunctionServices {
   assert?: AssertService;
   block?: BlockService;
   log?: LogService;
-  uniqueId?: UniqueIdService;
   saveFeatures?: KafkaService;
   object?: ObjectService;
 }
@@ -69,15 +67,10 @@ export function registerAllFunctions(
     );
   }
 
-  if (services.uniqueId) {
-    registerEntityFunctions(
-      functionRegistry.createStdlibRegistry("entity"),
-      services.uniqueId
-    );
-  }
+  registerEntityFunctions(functionRegistry.createStdlibRegistry("entity"));
 
   registerSaveFunctions(
-    functionRegistry.createStdlibRegistry("type"),
+    functionRegistry.createStdlibRegistry("save"),
     services
   );
   registerKeyFunctions(functionRegistry.createStdlibRegistry("key"));
