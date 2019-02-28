@@ -7,12 +7,7 @@ import { SimpleManipulator } from "./SimpleManipulator";
 import { createSimpleContext } from "../api/ctx";
 import { SqrlTest } from "../testing/SqrlTest";
 import { LocalFilesystem, Filesystem } from "../api/filesystem";
-import {
-  buildTestFunctionRegistry,
-  buildTestServices
-} from "../testing/runSqrlTest";
-import { invariant } from "sqrl-common";
-import { FunctionServices } from "../function/registerAllFunctions";
+import { buildTestFunctionRegistry } from "../testing/runSqrlTest";
 import { FunctionRegistry, Execution } from "../api/execute";
 import * as path from "path";
 import { Logger } from "../api/log";
@@ -23,10 +18,10 @@ export async function runSqrlTest(
   options: {
     config?: Config;
     functionRegistry?: FunctionRegistry;
-    services?: FunctionServices;
     logger?: Logger;
     filesystem?: Filesystem;
     librarySqrl?: string;
+    register?: (instance: FunctionRegistry) => Promise<void>;
   } = {}
 ): Promise<{
   codedErrors: Error[];
@@ -36,19 +31,16 @@ export async function runSqrlTest(
 }> {
   let functionRegistry: FunctionRegistry;
 
-  let services: FunctionServices = {};
   if (options.functionRegistry) {
-    invariant(
-      !options.services,
-      ".services not compatible with .functionRegistry"
-    );
     functionRegistry = options.functionRegistry;
   } else {
-    services = options.services || (await buildTestServices());
     functionRegistry = await buildTestFunctionRegistry({
-      config: options.config,
-      services
+      config: options.config
     });
+  }
+
+  if (options.register) {
+    await options.register(functionRegistry);
   }
 
   const filesystem =

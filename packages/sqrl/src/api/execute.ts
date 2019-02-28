@@ -14,8 +14,7 @@ import { CompileState } from "./parse";
 import { buildFunctionRegistryForServices } from "../helpers/FunctionRegistryHelpers";
 import { ArgumentCheck } from "./arg";
 import { SourcePrinter } from "./executable";
-import { FunctionServices } from "../function/registerAllFunctions";
-import { SqrlObject } from "sqrl-common";
+import { SqrlObject, AssertService } from "sqrl-common";
 import { SqrlKey } from "./object";
 import { isValidFeatureName } from "../feature/FeatureName";
 import { Config } from "./config";
@@ -25,6 +24,15 @@ export const STANDARD_LIBRARY = "sqrl";
 export interface ExecutionErrorProperties {
   functionName?: string;
   fatal?: boolean;
+}
+
+export interface LogService {
+  log(manipulator: Manipulator, message: string);
+}
+
+export interface FunctionServices {
+  assert?: AssertService;
+  log?: LogService;
 }
 
 export type ManipulatorCallback = (ctx: Context) => Promise<void>;
@@ -121,6 +129,14 @@ export class FunctionRegistry {
       "Function registry is already linked to package: " + this.packageName
     );
     return new FunctionRegistry(this.config, this._functionRegistry, name);
+  }
+
+  async importFromPackage(name: string, importedPackage: any) {
+    invariant(
+      typeof importedPackage.register === "function",
+      "Required package did not include a `register` function: " + name
+    );
+    await importedPackage.register(this.createPackageInstance(name));
   }
 
   getConfig(): Config {

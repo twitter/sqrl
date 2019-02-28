@@ -7,66 +7,12 @@ import {
   SqrlFunctionRegistry,
   FunctionCostData
 } from "../function/FunctionRegistry";
-import {
-  registerAllFunctions,
-  FunctionServices,
-  KafkaService
-} from "../function/registerAllFunctions";
-import { SimpleManipulator } from "../simple/SimpleManipulator";
-import { SimpleBlockService } from "../simple/SimpleBlockService";
+import { registerAllFunctions } from "../function/registerAllFunctions";
 import { AssertService } from "sqrl-common";
-import { FunctionRegistry } from "../api/execute";
+import { FunctionRegistry, FunctionServices } from "../api/execute";
 import { getDefaultConfig, Config } from "../api/config";
 
-/*
-class SimpleId extends UniqueId {
-  constructor(private timeMs: number, private remainder: number) {
-    super();
-  }
-  getTimeMs(): number {
-    return this.timeMs;
-  }
-  getRemainder(): number {
-    return this.remainder;
-  }
-  getBuffer(): Buffer {
-    return Buffer.alloc(8, 0);
-  }
-  getNumberString(): string {
-    return "0";
-  }
-}
-
-class MockUniqueIdService implements UniqueIdService {
-  private db = {};
-  private remainder = 0;
-  constructor(private time: number) {
-  }
-  async create(ctx: Context) {
-    const remainder = this.remainder;
-    this.remainder += 1;
-    return new SimpleId(this.time, remainder);
-  }
-  async fetch(ctx: Context, type, key) {
-    this.db[type] = this.db[type] || {};
-    if (!this.db[type][key]) {
-      this.db[type][key] = await this.create(ctx);
-    }
-    return this.db[type][key];
-  }
-}
-*/
-
-class MockKafkaService extends KafkaService {
-  constructor(private topic: string) {
-    super();
-  }
-  writeJson(manipulator: SimpleManipulator, obj: any) {
-    manipulator.addKafka(this.topic, Buffer.from(JSON.stringify(obj)));
-  }
-}
-
-export class SimpleAssertService implements AssertService {
+export class CapturingAssertService implements AssertService {
   private firstError: Error;
 
   private captureError(err: Error) {
@@ -98,36 +44,30 @@ export class SimpleAssertService implements AssertService {
   }
 }
 
-export async function buildTestServices(
-  props: {} = {}
-): Promise<FunctionServices> {
+export async function buildTestFunctionRegistry(
+  options: {
+    config?: Config;
+    functionCost?: FunctionCostData;
+    services?: FunctionServices;
+  } = {}
+) {
+  const functionRegistry = new SqrlFunctionRegistry({
+    functionCost: options.functionCost
+  });
+
   let assert: AssertService;
   try {
     // tslint:disable-next-line:no-implicit-dependencies
     const { JestAssertService } = await require("sqrl-test-utils");
     assert = new JestAssertService();
   } catch (err) {
-    assert = new SimpleAssertService();
+    assert = new CapturingAssertService();
   }
-  return {
-    assert,
-    block: new SimpleBlockService(),
-    saveFeatures: new MockKafkaService("saveFeatures")
-  };
-}
 
-export async function buildTestFunctionRegistry(
-  options: {
-    config?: Config;
-    services?: FunctionServices;
-    functionCost?: FunctionCostData;
-  } = {}
-) {
-  const functionRegistry = new SqrlFunctionRegistry({
-    functionCost: options.functionCost
+  registerAllFunctions(functionRegistry, {
+    assert,
+    ...(options.services || {})
   });
-  const services = options.services || (await buildTestServices());
-  registerAllFunctions(functionRegistry, services);
   return new FunctionRegistry(
     {
       ...getDefaultConfig(),

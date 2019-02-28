@@ -8,7 +8,7 @@ import { registerBoolFunctions } from "./BoolFunctions";
 import { registerTypeFunctions } from "./TypeFunctions";
 import { registerComparisonFunctions } from "./ComparisonFunctions";
 import { registerMathFunctions } from "./MathFunctions";
-import { registerStdlibFunctions } from "./StdlibFunctions";
+import { registerControlFunctions } from "./ControlFunctions";
 import { registerEntityFunctions } from "./EntityFunctions";
 import { registerKeyFunctions } from "./KeyFunctions";
 import { registerArrayFunctions } from "./ArrayFunctions";
@@ -16,27 +16,10 @@ import { registerDateFunctions } from "./DateFunctions";
 import { registerDataFunctions } from "./DataFunctions";
 import { registerStringFunctions } from "./StringFunctions";
 import { registerTimeFunctions } from "./TimeFunctions";
-import { registerSaveFunctions, ObjectService } from "./SaveFunctions";
-import { Manipulator } from "../api/execute";
-import { registerSourceFunction } from "./SourceFunctions";
-import { BlockService, registerBlockFunctions } from "./BlockFunctions";
 import { registerAssertFunctions } from "./AssertFunctions";
-import { registerLoadFunctions } from "./LoadFunctions";
-import { registerLogFunctions, LogService } from "./LogFunctions";
+import { registerLogFunctions } from "./LogFunctions";
 import { registerWhenFunctions } from "./WhenFunctions";
-import { AssertService } from "sqrl-common";
-
-export abstract class KafkaService {
-  abstract writeJson(manipulator: Manipulator, obj: any);
-}
-
-export interface FunctionServices {
-  assert?: AssertService;
-  block?: BlockService;
-  log?: LogService;
-  saveFeatures?: KafkaService;
-  object?: ObjectService;
-}
+import { FunctionServices } from "../api/execute";
 
 export function registerAllFunctions(
   functionRegistry: SqrlFunctionRegistry,
@@ -50,34 +33,17 @@ export function registerAllFunctions(
     functionRegistry.createStdlibRegistry("log"),
     services.log
   );
-  registerLoadFunctions(functionRegistry.createStdlibRegistry("load"));
-  registerStdlibFunctions(functionRegistry.createStdlibRegistry("language"));
-  registerWhenFunctions(functionRegistry);
-
-  if (services.assert) {
-    registerAssertFunctions(
-      functionRegistry.createStdlibRegistry("assert"),
-      services.assert
-    );
-  }
-  if (services.block) {
-    registerBlockFunctions(
-      functionRegistry.createStdlibRegistry("block"),
-      services.block
-    );
-  }
-
-  registerEntityFunctions(functionRegistry.createStdlibRegistry("entity"));
-
-  registerSaveFunctions(
-    functionRegistry.createStdlibRegistry("save"),
-    services
+  registerControlFunctions(functionRegistry.createStdlibRegistry("control"));
+  registerWhenFunctions(functionRegistry.createStdlibRegistry("when"));
+  registerAssertFunctions(
+    functionRegistry.createStdlibRegistry("assert"),
+    services.assert
   );
+  registerEntityFunctions(functionRegistry.createStdlibRegistry("entity"));
   registerKeyFunctions(functionRegistry.createStdlibRegistry("key"));
   registerArrayFunctions(functionRegistry.createStdlibRegistry("list"));
   registerDataFunctions(functionRegistry.createStdlibRegistry("data"));
-  registerDateFunctions(functionRegistry.createStdlibRegistry("date"));
-  registerTimeFunctions(functionRegistry.createStdlibRegistry("time"));
+  registerDateFunctions(functionRegistry.createStdlibRegistry("date-time"));
+  registerTimeFunctions(functionRegistry.createStdlibRegistry("date-time"));
   registerStringFunctions(functionRegistry.createStdlibRegistry("string"));
-  registerSourceFunction(functionRegistry.createStdlibRegistry("source"));
 }

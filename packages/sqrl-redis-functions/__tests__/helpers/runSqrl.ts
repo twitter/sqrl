@@ -7,8 +7,7 @@ import {
   runSqrlTest as runLibSqrl,
   buildTestFunctionRegistry,
   FunctionRegistry,
-  Logger,
-  buildTestServices
+  Logger
 } from "sqrl";
 import { register } from "../../src";
 
@@ -18,7 +17,6 @@ export async function buildRedisTestFunctionRegistry(
   } = {}
 ) {
   const functionRegistry = await buildTestFunctionRegistry({
-    services: await buildTestServices(),
     config: {
       "testing.fixed-date": options.fixedDate
     }

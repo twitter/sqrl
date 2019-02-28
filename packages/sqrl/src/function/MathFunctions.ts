@@ -18,18 +18,6 @@ function sha256HexSync(data: Buffer | string): string {
   return hasher.digest("hex");
 }
 
-function arrayMath(callback, values, defaultValue = null) {
-  values = values.filter((value?) => value !== null);
-  if (values.some((value?) => typeof value !== "number")) {
-    return null;
-  }
-  if (!values.length) {
-    return defaultValue;
-  }
-  const result = callback(...values);
-  return isNaN(result) ? null : result;
-}
-
 export function registerMathFunctions(registry: StdlibRegistry) {
   const safeMathOpts = {
     args: [AT.any, AT.any],
@@ -61,15 +49,26 @@ export function registerMathFunctions(registry: StdlibRegistry) {
     }
   );
 
-  const arrayMax = arrayMath.bind(null, Math.max.bind(Math));
-  registry.save(arrayMax, {
-    name: "arrayMax",
-    argstring: "numbers",
-    docstring: "Returns the maximum value of the numbers provided"
-  });
+  /**
+   * Filters the given list, removes any nulls and returns an empty list if
+   * there are any non-numbers
+   */
+  function filterNumberList(values: any[]): number[] {
+    values = values.filter(v => v !== null);
+    if (values.some(v => typeof v !== "number" || isNaN(v))) {
+      return [];
+    } else {
+      return values;
+    }
+  }
+
   registry.save(
     function max(...values) {
-      return arrayMax(values);
+      values = filterNumberList(values);
+      if (values.length === 0) {
+        return null;
+      }
+      return Math.max(...values);
     },
     {
       allowNull: true,
@@ -78,15 +77,13 @@ export function registerMathFunctions(registry: StdlibRegistry) {
     }
   );
 
-  const arrayMin = arrayMath.bind(null, Math.min.bind(Math));
-  registry.save(arrayMin, {
-    name: "arrayMin",
-    argstring: "numbers",
-    docstring: "Returns the minimum value of the numbers provided"
-  });
   registry.save(
     function min(...values) {
-      return arrayMin(values);
+      values = filterNumberList(values);
+      if (values.length === 0) {
+        return null;
+      }
+      return Math.min(...values);
     },
     {
       allowNull: true,

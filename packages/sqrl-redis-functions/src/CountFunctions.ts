@@ -27,6 +27,7 @@ import {
   TrendingArguments,
   AliasedFeature
 } from "./parser/sqrlRedis";
+import { SqrlExecutionState } from "sqrl/lib/execute/SqrlExecutionState";
 
 const ENTITY_TYPE = "Counter";
 
@@ -486,10 +487,7 @@ export function registerCountFunctions(
     );
     const resultAst = AstBuilder.call("_add", [
       hasAlias ? AstBuilder.constant(0) : addAst,
-      AstBuilder.call("arrayMax", [
-        databaseCountTransform(state, ast, args),
-        AstBuilder.constant(0)
-      ])
+      AstBuilder.call("_maxCount", [databaseCountTransform(state, ast, args)])
     ]);
     return state.setGlobal(
       ast,
@@ -497,6 +495,15 @@ export function registerCountFunctions(
       `count(${args.timespan}:${keyedCounterName})`
     );
   }
+
+  registry.registerSync(
+    function _maxCount(state: SqrlExecutionState, counts: number[]) {
+      return Math.max(0, ...counts);
+    },
+    {
+      args: [AT.state, AT.any.array]
+    }
+  );
 
   registry.registerCustom(
     function count(state: CompileState, ast: CustomCallAst): Ast {

@@ -5,11 +5,9 @@
  */
 // tslint:disable:no-console
 // tslint:disable:no-submodule-imports (@TODO)
-import { FunctionServices } from "sqrl/lib/function/registerAllFunctions";
 import { createSqrlServer } from "../SqrlServer";
 import { SqrlTest } from "sqrl/lib/testing/SqrlTest";
 import { SqrlRepl } from "../repl/SqrlRepl";
-import { LocalFilesystem, Filesystem } from "sqrl/lib/api/filesystem";
 import * as path from "path";
 import * as waitForSigint from "wait-for-sigint";
 import {
@@ -24,11 +22,13 @@ import {
   isValidFeatureName,
   ExecutableCompiler,
   ExecutableSpec,
-  SimpleManipulator,
-  SimpleLogService,
-  SimpleBlockService,
   getDefaultConfig,
-  Config
+  Config,
+  Manipulator,
+  FunctionServices,
+  LogService,
+  LocalFilesystem,
+  Filesystem
 } from "sqrl";
 import SqrlAst from "sqrl/lib/ast/SqrlAst";
 import { StatementAst } from "sqrl/lib/ast/Ast";
@@ -37,7 +37,6 @@ import { createDefaultContext } from "sqrl/lib/helpers/ContextHelpers";
 import { WatchedFilesystem } from "./WatchedFilesystem";
 import { CliPrettyOutput } from "./CliPrettyOutput";
 import { CliRun } from "./CliRun";
-import Semaphore from "sqrl/lib/jslib/Semaphore";
 import {
   CliActionOutput,
   CliCsvOutput,
@@ -62,6 +61,8 @@ import * as SQRL from "sqrl";
 import { invariant } from "sqrl-common";
 import { renderFunctionsHelp } from "../renderFunctionsHelp";
 import { CliError } from "./CliError";
+import { CliManipulator } from "sqrl-cli-functions";
+import Semaphore from "sqrl/lib/jslib/Semaphore";
 
 const readFileAsync = promisify(readFile);
 
@@ -116,12 +117,6 @@ export interface CliArgs {
   "--output": string;
   "--concurrency": string;
   "--skip-default-requires"?: boolean;
-}
-
-function cliInvariant(condition: boolean, message: string) {
-  if (!condition) {
-    throw new CliError(message);
-  }
 }
 
 async function readJsonFile(path: string) {
@@ -206,15 +201,21 @@ async function getInputs(args: CliArgs) {
   return inputs;
 }
 
-class CliAssertService implements AssertService {
-  compare(left: any, operator: string, right: any, arrow: string) {
+export class CliAssertService implements AssertService {
+  compare(
+    manipulator: Manipulator,
+    left: any,
+    operator: string,
+    right: any,
+    arrow: string
+  ) {
     if (!sqrlCompare(left, operator, right)) {
       console.error("Assertion failed:", left, operator, right);
       console.error(arrow);
       process.exit(1);
     }
   }
-  ok(value: any, arrow: string) {
+  ok(manipulator: Manipulator, value: any, arrow: string) {
     if (!SqrlObject.isTruthy(value)) {
       console.error("Assertion failed:", value);
       console.error(arrow);
@@ -223,16 +224,13 @@ class CliAssertService implements AssertService {
   }
 }
 
-async function requirePackage(
-  name: string,
-  functionRegistry: FunctionRegistry
-) {
-  const imported = await import(name);
-  cliInvariant(
-    typeof imported.register === "function",
-    "Required package did not include a `register` function: " + name
-  );
-  await imported.register(functionRegistry.createPackageInstance(name));
+export class CliLogService implements LogService {
+  log(manipulator: Manipulator, message: string) {
+    if (!(manipulator instanceof CliManipulator)) {
+      throw new Error("Expected CliManipulator");
+    }
+    manipulator.log(message);
+  }
 }
 
 async function buildInstance(
@@ -251,22 +249,31 @@ async function buildInstance(
     config["redis.address"] = args["--redis"];
   }
 
-  const services: FunctionServices = {};
-  services.assert = new CliAssertService();
-  services.block = new SimpleBlockService();
-  services.log = new SimpleLogService();
-
+  const services: FunctionServices = {
+    assert: new CliAssertService(),
+    log: new CliLogService()
+  };
   const functionRegistry = SQRL.buildFunctionRegistry({ config, services });
 
   if (!args["--skip-default-requires"]) {
-    await requirePackage("sqrl-redis-functions", functionRegistry);
-    await requirePackage("sqrl-text-functions", functionRegistry);
+    await functionRegistry.importFromPackage(
+      "sqrl-redis-functions",
+      await import("sqrl-redis-functions")
+    );
+    await functionRegistry.importFromPackage(
+      "sqrl-text-functions",
+      await import("sqrl-text-functions")
+    );
+    await functionRegistry.importFromPackage(
+      "sqrl-load-functions",
+      await import("sqrl-load-functions")
+    );
   }
 
   if (args["--require"]) {
     // Register each package in order
     for (const name of args["--require"].split(",")) {
-      await requirePackage(name, functionRegistry);
+      await functionRegistry.importFromPackage(name, await import(name));
     }
   }
 
@@ -313,7 +320,7 @@ export async function cliMain(
 
     const test = new SqrlTest(functionRegistry._functionRegistry, {
       filesystem,
-      manipulatorFactory: () => new SimpleManipulator()
+      manipulatorFactory: () => new CliManipulator()
     });
 
     // @todo: If we're using stateful storage this might cause conflicts
@@ -474,7 +481,7 @@ export async function cliMain(
       }
       const test = new SqrlTest(functionRegistry._functionRegistry, {
         filesystem,
-        manipulatorFactory: () => new SimpleManipulator(),
+        manipulatorFactory: () => new CliManipulator(),
         inputs
       });
       await test.runStatements(ctx, statements);
