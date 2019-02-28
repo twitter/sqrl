@@ -192,7 +192,7 @@ sqrlTest(
   
   ASSERT max(5, 7) = 7;
   ASSERT max(7, 5) = 7;
-  ASSERT max() is null;
+  ASSERT max('7') is null;
   ASSERT min(7, null, 3) = 3;
   ASSERT min(7, null, null) = 7;
   ASSERT min(null, null, null) is null;
