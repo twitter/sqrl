@@ -6,17 +6,6 @@
 import { StdlibRegistry } from "./FunctionRegistry";
 
 import { AstTypes as AT } from "../ast/AstTypes";
-import crypto = require("crypto");
-
-function sha256HexSync(data: Buffer | string): string {
-  const hasher = crypto.createHash("sha256");
-  if (data instanceof Buffer) {
-    hasher.update(data);
-  } else {
-    hasher.update(data, "utf8");
-  }
-  return hasher.digest("hex");
-}
 
 export function registerMathFunctions(registry: StdlibRegistry) {
   const safeMathOpts = {
@@ -203,13 +192,4 @@ export function registerMathFunctions(registry: StdlibRegistry) {
       docstring: "Return the floating point result of the division"
     }
   );
-
-  registry.save(sha256HexSync, {
-    args: [AT.any],
-    name: "sha256",
-    pure: true,
-    background: true,
-    argstring: "value",
-    docstring: "Returns the sha256 hash of the given value as hex"
-  });
 }

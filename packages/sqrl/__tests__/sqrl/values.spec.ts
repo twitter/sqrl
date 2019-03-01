@@ -197,7 +197,5 @@ sqrlTest(
   ASSERT min([7, null, null]) = 7;
   ASSERT min([null, null, null]) is null;
   
-  ASSERT sha256(join([Six, Seven, "hello joe"], "")) = 'b42a77e208707718d939c3529dbfb5c9cfbf57f52551a72a352cbd64c74111b4';
-  
 `
 );

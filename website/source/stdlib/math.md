@@ -33,12 +33,6 @@ Returns the minimum value in the list provided
 
 Returns the rounded value of the given number
 
-## sha256
-
-**sha256**(value)
-
-Returns the sha256 hash of the given value as hex
-
 ## sum
 
 **sum**(number list)

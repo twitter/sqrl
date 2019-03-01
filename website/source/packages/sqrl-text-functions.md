@@ -41,6 +41,12 @@ Replaces each match of the given regular expression in the string
 
 Returns true if the given regular expression matches the string
 
+## sha256
+
+**sha256**(value)
+
+Returns the sha256 hash of the given value as hex
+
 ## simhash
 
 **simhash**(text)
