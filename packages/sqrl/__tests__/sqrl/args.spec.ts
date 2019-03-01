@@ -20,9 +20,11 @@ test("runtime checks", async () => {
 
 test("tests inside sqrl", async () => {
   await expect(runSqrlTest("LET V := max();")).rejects.toThrow(
-    /Expected at least 1 argument but got 0/
+    /Expected at least 2 arguments but got 0/
   );
-  await expect(runSqrlTest("LET V := max(1);")).resolves.toBeTruthy();
+  await expect(runSqrlTest("LET V := max(1);")).rejects.toThrow(
+    /Expected at least 2 arguments but got 1/
+  );
   await expect(runSqrlTest("LET V := max(1,2);")).resolves.toBeTruthy();
   await expect(runSqrlTest("LET V := max(1,2,3);")).resolves.toBeTruthy();
 

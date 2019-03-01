@@ -321,6 +321,7 @@ export class SqrlFunctionRegistry {
 
     if (props.name && !props.name.startsWith("_")) {
       if (typeof props.argstring !== "string" || !props.docstring) {
+        // tslint:disable-next-line:no-console
         console.error(
           "Warning: " + props.name + " is missing argstring and/or docstring"
         );

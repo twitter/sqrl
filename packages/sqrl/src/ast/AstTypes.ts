@@ -209,7 +209,7 @@ function compileTypesInvariant(fnAst: CallAst, types: ArgumentCheck[]) {
 
   const providedArgs = args.length;
   const repeatedLast = types.length && types[types.length - 1].isRepeated;
-  const optArgs = types.filter(t => t.isOptional || t.isRepeated).length;
+  const optArgs = types.filter(t => t.isOptional).length;
   const maxArgs = repeatedLast ? providedArgs : types.length;
   const minArgs = types.length - optArgs;
 
