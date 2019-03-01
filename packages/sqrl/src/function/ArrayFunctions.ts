@@ -43,18 +43,36 @@ export function registerArrayFunctions(registry: StdlibRegistry) {
   );
 
   registry.save(
-    function sortList(arr) {
+    function sort(arr) {
       if (!Array.isArray(arr)) {
         return null;
+      } else if (arr.length === 0) {
+        return [];
       }
+
       const basic = new WeakMap();
       arr.forEach(v => {
         basic[v] = SqrlObject.ensureBasic(v);
       });
 
-      return [...arr].sort((a, b) => {
-        return basic[a] - basic[b];
-      });
+      const type = typeof basic[arr[0]];
+
+      invariant(
+        arr.every(val => typeof basic[val] === type),
+        "Every value in the array must be of the same type"
+      );
+
+      if (type === "string") {
+        return [...arr].sort((a, b) => {
+          return basic[a].localeCompare(basic[b]);
+        });
+      } else if (type === "number") {
+        return [...arr].sort((a, b) => {
+          return basic[a] - basic[b];
+        });
+      } else {
+        throw new Error("Sort of the given type is not implemented");
+      }
     },
     {
       args: [AT.any],

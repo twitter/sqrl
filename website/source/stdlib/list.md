@@ -57,9 +57,9 @@ Returns the last item in the provided list
 
 Returns the length of a provided list
 
-## sortList
+## sort
 
-**sortList**(list)
+**sort**(list)
 
 Returns the provided list in sorted order
 
