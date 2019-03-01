@@ -53,8 +53,8 @@ export interface CountedTypeChecker extends RuntimeTypeChecker {
 }
 
 export interface TypeChecker extends CountedTypeChecker {
-  optional: CountedTypeChecker;
-  repeated: CountedTypeChecker;
+  optional: TypeChecker;
+  repeated: TypeChecker;
 }
 
 const pluralize = (text, count: number) =>
@@ -283,6 +283,8 @@ function typeChecker(compileTimeCheck: CompileCheckCallback): TypeChecker {
   const o = createRuntimeCheckers(compileTimeCheck, false, false);
   o.optional = createRuntimeCheckers(compileTimeCheck, true, false);
   o.repeated = createRuntimeCheckers(compileTimeCheck, false, true);
+  o.optional.repeated = createRuntimeCheckers(compileTimeCheck, true, true);
+  o.repeated.optional = o.optional.repeated;
   return o;
 }
 
