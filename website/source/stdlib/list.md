@@ -3,11 +3,11 @@ title: List Functions
 
 # List Functions
 
-## concatLists
+## concat
 
-**concatLists**(list, list...)
+**concat**(value, value...)
 
-Concatenates many lists into a single long list
+Concatenates the given arguments (strings or lists) together
 
 ## dedupe
 
@@ -31,7 +31,7 @@ Returns the first item in the provided list
 
 **flatten**(list)
 
-Reducess multiple levels of lists into a single flat list
+Reduces multiple levels of lists into a single flat list
 
 ## index
 
@@ -56,24 +56,6 @@ Returns the last item in the provided list
 **length**(list)
 
 Returns the length of a provided list
-
-## listMax
-
-**listMax**(list)
-
-Returns the maximum of all items in the list
-
-## listMin
-
-**listMin**(list)
-
-Returns the minimum of all items in the list
-
-## listSum
-
-**listSum**(list)
-
-Returns the sum of all items in the list
 
 ## sortList
 

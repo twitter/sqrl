@@ -63,7 +63,7 @@ export function registerMathFunctions(registry: StdlibRegistry) {
   }
 
   registry.save(
-    function max(...values) {
+    function max(values) {
       values = filterNumberList(values);
       if (values.length === 0) {
         return null;
@@ -72,14 +72,14 @@ export function registerMathFunctions(registry: StdlibRegistry) {
     },
     {
       allowNull: true,
-      args: [AT.any, AT.any.repeated],
-      argstring: "number[, ...]",
-      docstring: "Returns the maximum value of the arguments provided"
+      args: [AT.any.array],
+      argstring: "number list",
+      docstring: "Returns the maximum value in the list provided"
     }
   );
 
   registry.save(
-    function min(...values) {
+    function min(values) {
       values = filterNumberList(values);
       if (values.length === 0) {
         return null;
@@ -88,9 +88,25 @@ export function registerMathFunctions(registry: StdlibRegistry) {
     },
     {
       allowNull: true,
-      args: [AT.any, AT.any.repeated],
-      argstring: "number[, ...]",
-      docstring: "Returns the minimum value of the arguments provided"
+      args: [AT.any.array],
+      argstring: "number list",
+      docstring: "Returns the minimum value in the list provided"
+    }
+  );
+
+  registry.save(
+    function sum(values) {
+      values = filterNumberList(values);
+      if (values.length === 0) {
+        return null;
+      }
+      return values.reduce((a, b) => a + b, 0);
+    },
+    {
+      allowNull: true,
+      args: [AT.any.array],
+      argstring: "number list",
+      docstring: "Returns the sum of the values in the list provided"
     }
   );
 

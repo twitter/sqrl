@@ -14,13 +14,6 @@ function _isStringOrArray(v?) {
   return typeof v === "string" || Array.isArray(v);
 }
 
-function tryEnsureNumberArray(arr?) {
-  if (!Array.isArray(arr)) {
-    return null;
-  }
-  return arr.filter((value?) => typeof value === "number");
-}
-
 export function registerArrayFunctions(registry: StdlibRegistry) {
   registry.save(
     function dedupe(arr) {
@@ -72,22 +65,6 @@ export function registerArrayFunctions(registry: StdlibRegistry) {
   );
 
   registry.save(
-    function concatLists(...arrays) {
-      const values = [].concat(...arrays);
-      if (values.length && values.every((v?) => v === null)) {
-        return [];
-      }
-      return values.filter((v?) => v !== null);
-    },
-    {
-      allowSqrlObjects: true,
-      allowNull: true,
-      argstring: "list, list...",
-      docstring: "Concatenates many lists into a single long list"
-    }
-  );
-
-  registry.save(
     function _flatten(array) {
       if (!array) {
         return null;
@@ -111,7 +88,7 @@ export function registerArrayFunctions(registry: StdlibRegistry) {
       name: "flatten",
       allowNull: true,
       argstring: "list",
-      docstring: "Reducess multiple levels of lists into a single flat list"
+      docstring: "Reduces multiple levels of lists into a single flat list"
     }
   );
 
@@ -148,6 +125,23 @@ export function registerArrayFunctions(registry: StdlibRegistry) {
   );
 
   registry.save(
+    function concat(...items) {
+      if (items.every(i => typeof i === "string" || typeof i === "number")) {
+        return items.join("");
+      } else if (items.every(i => Array.isArray(i))) {
+        return [].concat(...items);
+      } else {
+        throw new Error("Invalid values provided to function");
+      }
+    },
+    {
+      args: [AT.any, AT.any.repeated],
+      argstring: "value, value...",
+      docstring: "Concatenates the given arguments (strings or lists) together"
+    }
+  );
+
+  registry.save(
     function join(arr, by) {
       if (!Array.isArray(arr) || typeof by !== "string") {
         return null;
@@ -178,45 +172,6 @@ export function registerArrayFunctions(registry: StdlibRegistry) {
   );
 
   registry.save(
-    function listSum(arr) {
-      const values = tryEnsureNumberArray(arr);
-      return values.reduce((a, b) => a + b, 0);
-    },
-    {
-      allowNull: true,
-      args: [AT.any],
-      argstring: "list",
-      docstring: "Returns the sum of all items in the list"
-    }
-  );
-
-  registry.save(
-    function listMin(arr) {
-      const values = tryEnsureNumberArray(arr);
-      return values && values.length ? Math.min(...values) : null;
-    },
-    {
-      allowNull: true,
-      args: [AT.any],
-      argstring: "list",
-      docstring: "Returns the minimum of all items in the list"
-    }
-  );
-
-  registry.save(
-    function listMax(arr) {
-      const values = tryEnsureNumberArray(arr);
-      return values && values.length ? Math.max(...values) : null;
-    },
-    {
-      allowNull: true,
-      args: [AT.any],
-      argstring: "list",
-      docstring: "Returns the maximum of all items in the list"
-    }
-  );
-
-  registry.save(
     function _contains(seq, value) {
       if (!_isStringOrArray(seq) || seq === null || value === null) {
         return null;
@@ -235,14 +190,17 @@ export function registerArrayFunctions(registry: StdlibRegistry) {
 
   registry.save(
     function index(state, seq, index) {
-      if (!Array.isArray(seq) || typeof index !== "number") {
+      if (Array.isArray(seq)) {
+        return index >= seq.length ? null : seq[index];
+      } else if (typeof seq === "string") {
+        return index >= seq.length ? null : seq.charAt(index);
+      } else {
         return null;
       }
-      return index >= seq.length ? null : seq[index];
     },
     {
       allowNull: true,
-      args: [AT.state, AT.any.array, AT.any.number],
+      args: [AT.state, AT.any, AT.any.number],
       argstring: "list, index",
       docstring: "Returns the item at the specified index in a list"
     }

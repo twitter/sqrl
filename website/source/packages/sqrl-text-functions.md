@@ -3,6 +3,8 @@ title: sqrl-text-functions
 
 # sqrl-text-functions
 
+Functions for doing analysis on text.
+
 ## charGrams
 
 **charGrams**(text, size)
