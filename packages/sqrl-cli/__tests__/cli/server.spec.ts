@@ -4,19 +4,13 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 import { runCli } from "../helpers/runCli";
-import { defaultCliArgs } from "../../src/cli/CliMain";
 import * as request from "request-promise-native";
 
 test("works", async () => {
   let ranTests = false;
 
   await runCli(
-    {
-      ...defaultCliArgs,
-      serve: true,
-      "<filename>": __dirname + "/../../../../examples/hello.sqrl",
-      "--port": "0"
-    },
+    ["serve", __dirname + "/../../../../examples/hello.sqrl", "--port=0"],
     "",
     {
       serverWaitCallback: async ({ server }) => {
