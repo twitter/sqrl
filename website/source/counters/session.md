@@ -76,6 +76,7 @@ CREATE RULE DayLongMessageSession WHERE MessageHourSessionAgeInHours >= 24
              "past ${MessageHourSessionAgeInHours} hours straight";
  ```
  
+<!-- @todo: These features have not been implemented in open-source SQRL (yet!)
 
 ## Variance checks
 
@@ -104,6 +105,7 @@ LET EmailLengthIpSessionVariance := variance(ActorEmailHandleLength GROUP BY IpS
 
 With two lines of code we can now look at the variance in email lengths across signups for a given IP address!
 If we wanted to create a rule to flag this we might want to add a minimum number of signups before considering this risky behavior. All this would require is counting how many total signups we have seen for this signup session.
+-->
 
 ## Counting
 
@@ -114,6 +116,8 @@ LET NumSignupsByIpSignupSessionHour := count(
 ```
 
 Here, we are counting how many signups we have seen for this session over the past week. This gives us plenty of buffer in case the IP has continuous signup activity (remember that as soon as an hour with no signups elapses we will get a new session ID).
+
+<!-- @todo: These features have not been implemented in open-source SQRL (yet!)
 To tie it all together we can create a rule like this:
 
 ## Variance rule
@@ -176,3 +180,4 @@ CREATE RULE 99PercentilePaymentVelocity
   WHERE IsPaymentVelocity99Percentile
   WITH REASON “User is in the 99th percentile for payment velocity: ${PaymentVelocity}”;
 ```
+-->
