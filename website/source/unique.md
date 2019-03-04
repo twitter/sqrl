@@ -24,9 +24,9 @@ We think this is unique to SQRL (but it's a pretty good idea so someone else mus
 
 SQRL does not have user-defined functions, recursion or unbounded loops. This produces simpler code for non-programmers and allows deep static analysis. Logic that needs the power of a full programming language can be implemented as new library functions.
 
-## Cost optimization
+## Cost optimisation
 
-SQRL will optimize your code to be cheaper to run in production. Expressions such as `a() OR b()` can be re-ordered by the cost of each function in production (if you have that data.)
+SQRL will optimise your code to be cheaper to run in production. Expressions such as `a() OR b()` can be re-ordered by the cost of each function in production (if you have that data.) For more detail see the [page on cost optimisation](language/cost.html).
 
 ## Entities as first-class citizens
 
