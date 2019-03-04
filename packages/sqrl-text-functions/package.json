@@ -1,7 +1,7 @@
 {
   "name": "sqrl-text-functions",
   "version": "0.5.0",
-  "description": "> TODO: description",
+  "description": "SQRL (A Safe, Stateful Rules Language for Event Streams) - functions for working with text",
   "homepage": "https://twitter.github.io/sqrl",
   "license": "Apache-2.0",
   "repository": "https://github.com/twitter/sqrl/tree/master/packages/sqrl-text-functions",
