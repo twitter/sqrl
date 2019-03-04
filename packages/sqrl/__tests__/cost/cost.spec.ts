@@ -1,5 +1,4 @@
 import { runSqrlTest } from "../../src";
-import { performance } from "perf_hooks";
 
 /**
  * Copyright 2019 Twitter, Inc.
@@ -8,15 +7,16 @@ import { performance } from "perf_hooks";
  */
 
 test("works", async () => {
-  let aTime = null;
-  let bTime = null;
+  let aTick = null;
+  let bTick = null;
+  let tick = 0;
   async function register(instance) {
     instance.registerSync(function a(rv) {
-      aTime = performance.now();
+      aTick = tick++;
       return rv;
     });
     instance.registerSync(function b(rv) {
-      bTime = performance.now();
+      bTick = tick++;
       return rv;
     });
   }
@@ -29,14 +29,13 @@ test("works", async () => {
   ];
 
   for (const statement of statements) {
-    // A is mentioned first in all the statements so when everything else is equal- should be first.
-    aTime = null;
-    bTime = null;
-    await runSqrlTest(statement, { register });
-    expect(aTime).toBeLessThan(bTime);
+    tick = 0;
 
-    aTime = null;
-    bTime = null;
+    // A is mentioned first in all the statements so when everything else is equal- should be first.
+    await runSqrlTest(statement, { register });
+    expect(aTick).toEqual(0);
+    expect(bTick).toEqual(1);
+
     await runSqrlTest(statement, {
       register,
       functionCost: {
@@ -44,10 +43,9 @@ test("works", async () => {
         b: 1
       }
     });
-    expect(aTime).toBeGreaterThan(bTime);
+    expect(aTick).toEqual(3);
+    expect(bTick).toEqual(2);
 
-    aTime = null;
-    bTime = null;
     await runSqrlTest(statement, {
       register,
       functionCost: {
@@ -55,6 +53,7 @@ test("works", async () => {
         b: 1000
       }
     });
-    expect(aTime).toBeLessThan(bTime);
+    expect(aTick).toEqual(4);
+    expect(bTick).toEqual(5);
   }
 });

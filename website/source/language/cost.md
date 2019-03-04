@@ -32,3 +32,7 @@ LET Z := Y + X;
 This data is then used when ordering `AND` or `OR` conditions. Since the order of the parameters does not affect the result in SQRL, we can safely re-order to make the code cheaper and/or faster to run.
 
 For example, given the above code `expensiveFunction() OR cheapFunction()` will be re-ordered to calculate `cheapFunction()` first and _only_ calculate the value of `expensiveFunction()` if it was not truthy.
+
+### Calculating costs in production
+
+It is up to you to determine how much each function costs. One way to do this is to figure out how many requests/day a backend service processes and divide it by the total daily cost of running that service. Functions that are purely CPU-bound can be measured and use an average.
