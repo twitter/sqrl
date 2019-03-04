@@ -58,7 +58,7 @@
     "ioredis": "^4.3.0",
     "moment": "^2.23.0",
     "murmurhash-native": "^3.3.0",
-    "sqrl": "file:../sqrl",
+    "sqrl-engine": "file:../sqrl-engine",
     "sqrl-common": "file:../sqrl-common"
   }
 }

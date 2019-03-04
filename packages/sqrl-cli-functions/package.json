@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "bignum": "^0.13.0",
-    "sqrl": "file:../sqrl",
+    "sqrl-engine": "file:../sqrl-engine",
     "sqrl-common": "file:../sqrl-common"
   }
 }
