@@ -3,8 +3,6 @@ title: Queue consumer
 
 # Deploying SQRL as a queue consumer
 
-### SQRL Kafka Consumers
-
 If you're already using a queue such as [Kafka](https://kafka.apache.org), [Amazon SQS](https://aws.amazon.com/sqs/) or one of hundreds of similar products you can link SQRL directly to that.
 
 Running off a queue your SQRL execution is [asynchronous](async.html) — meaning the event is not blocked waiting for the result of the execution. This means you can afford to do a much deeper analysis without holding up the client waiting to post their comment or signup. These executions can take as long as they want, though the average we've seen is five to thirty seconds.
