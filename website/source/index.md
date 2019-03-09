@@ -21,7 +21,7 @@ Come talk to us on the [SQRL discord server](https://discord.gg/mMJwWT6)
 **SQRL** (Smyte Query and Rules Language) is designed to be used as a library, but the easiest way to start is with the command line interface.
 
 ```
-$ npm install --global sqrl-cli
+$ npm install --global sqrl-cli sqrl-engine
 $ cat <<EOF > simple.sqrl
 LET Username := input();
 LET Message := concat("Hello, ", Username, "!");
