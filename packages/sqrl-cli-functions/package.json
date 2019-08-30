@@ -48,7 +48,6 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "bignum": "^0.13.0",
     "sqrl": "file:../sqrl",
     "sqrl-common": "file:../sqrl-common"
   }

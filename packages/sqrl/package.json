@@ -35,7 +35,7 @@
     "codegen": "./scripts/generateParser"
   },
   "dependencies": {
-    "bignum": "^0.13.0",
+    "bigint-buffer": "^1.1.2",
     "bluebird": "^3.5.5",
     "double-ended-queue": "^2.1.0-0",
     "eventemitter3": "^4.0.0",
@@ -49,7 +49,6 @@
     "sqrl-common": "file:../sqrl-common"
   },
   "devDependencies": {
-    "@types/bignum": "^0.0.29",
     "@types/jest": "^24.0.18",
     "@types/jest-diff": "^20.0.1",
     "@types/jsonpath": "^0.2.0",
@@ -72,6 +71,6 @@
     "typescript": "^3.6.2"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=10.0.0"
   }
 }
