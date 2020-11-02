@@ -43,7 +43,7 @@
     "jsonschema": "^1.2.4",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.31",
-    "murmurhash-native": "^3.4.1",
+    "murmur-128": "^0.2.1",
     "node-nice": "^0.0.1",
     "prettier": "^1.19.1",
     "sqrl-common": "^0.6.4"

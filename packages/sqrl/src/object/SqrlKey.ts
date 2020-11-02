@@ -22,7 +22,7 @@ export class SqrlKey extends SqrlObject {
     public counterEntity: SqrlEntity,
     public featureValues: any[],
     public timeMs: number,
-    public featuresHash: Buffer
+    public featuresHash: Uint8Array
   ) {
     super();
 
