@@ -3,12 +3,13 @@
  * Licensed under the Apache License, Version 2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  */
-import { LocalFilesystem, Filesystem } from "../api/filesystem";
+import { Filesystem } from "../api/filesystem";
 import { SqrlParserSourceOptions } from "../compile/SqrlParserState";
 import { basename, dirname } from "path";
 import { parseSqrl } from "../parser/SqrlParse";
 import { StatementAst } from "../ast/Ast";
 import invariant from "../jslib/invariant";
+import { LocalFilesystem } from "../node/LocalFilesystem";
 
 export function statementsFromString(
   source: string,

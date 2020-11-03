@@ -17,6 +17,9 @@
   "files": [
     "lib"
   ],
+  "browser": {
+    "lib/node/LocalFilesystem.js": "lib/browser/LocalFilesystem.js"
+  },
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
