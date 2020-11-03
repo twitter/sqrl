@@ -14,3 +14,10 @@ export class LocalFilesystem extends Filesystem {
     throw new Error('LocalFilesystem is not supported in the browser.')
   }
 }
+
+export function splitPath(filePath: string): {
+  dirname: string,
+  basename: string
+} {
+  throw new Error('Filesystem functionality is not available in the browser.')
+}

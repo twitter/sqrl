@@ -1,4 +1,4 @@
-import { join, resolve } from "path";
+import * as path from "path";
 import { readFileSync, readdirSync } from "fs";
 import { Filesystem } from "../api/filesystem";
 
@@ -7,9 +7,9 @@ export class LocalFilesystem extends Filesystem {
     super();
   }
 
-  tryList(path: string) {
+  tryList(dirPath: string) {
     try {
-      return readdirSync(join(this.pwd, path)).filter(filename =>
+      return readdirSync(path.join(this.pwd, dirPath)).filter(filename =>
         filename.endsWith(".sqrl")
       );
     } catch (err) {
@@ -21,7 +21,17 @@ export class LocalFilesystem extends Filesystem {
   }
 
   tryRead(filename: string) {
-    const path = resolve(this.pwd, filename);
-    return readFileSync(path);
+    const filePath = path.resolve(this.pwd, filename);
+    return readFileSync(filePath);
   }
+}
+
+export function splitPath(filePath: string): {
+    dirname: string,
+    basename: string
+} {
+    return {
+        dirname: path.dirname(filePath),
+        basename: path.basename(filePath)
+    };
 }
