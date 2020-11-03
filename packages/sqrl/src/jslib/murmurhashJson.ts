@@ -5,7 +5,6 @@
  */
 import murmur128x64 = require("murmur-128");
 import stringify = require("fast-stable-stringify");
-import { TextEncoder } from "util";
 import {arrayToHex} from "sqrl-common";
 
 

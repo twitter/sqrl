@@ -6,7 +6,10 @@ const base = require("./jest.base");
 
 module.exports = {
   ...base,
-  projects: ["packages/sqrl/jest.config.js"],
+  projects: [
+    "packages/sqrl/jest.config.js",
+    "packages/sqrl-redis-functions/jest.config.js"
+  ],
   coverageDirectory: "<rootDir>/coverage/",
   testRegex: `.*/__tests__/.*\\.spec\\.ts$`
 };
