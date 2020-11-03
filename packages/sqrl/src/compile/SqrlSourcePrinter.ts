@@ -4,7 +4,7 @@
  * http://www.apache.org/licenses/LICENSE-2.0
  */
 import prettier = require("prettier/standalone");
-import prettierBabylon = require("prettier/parser-babylon");
+import prettierBabel = require("prettier/parser-babel");
 
 import invariant from "../jslib/invariant";
 
@@ -134,7 +134,7 @@ export default class SqrlSourcePrinter {
     const formatted = prettier
       .format("(" + replacedSource + ")()", {
         parser: "babel",
-        plugins: [prettierBabylon]
+        plugins: [prettierBabel]
       })
       .trim();
     return formatted.slice("(".length, formatted.length - ")();".length);
