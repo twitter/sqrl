@@ -5,11 +5,10 @@
  */
 import { Filesystem } from "../api/filesystem";
 import { SqrlParserSourceOptions } from "../compile/SqrlParserState";
-import { basename, dirname } from "path";
 import { parseSqrl } from "../parser/SqrlParse";
 import { StatementAst } from "../ast/Ast";
 import invariant from "../jslib/invariant";
-import { LocalFilesystem } from "../node/LocalFilesystem";
+import { LocalFilesystem, splitPath } from "../node/LocalFilesystem";
 
 export function statementsFromString(
   source: string,
@@ -48,9 +47,10 @@ export function sourceOptionsFromPath(
     customFunctions?: Set<string>;
   } = {}
 ): SqrlParserSourceOptions {
+  const {basename,dirname} = splitPath(path);
   return sourceOptionsFromFilesystem(
-    new LocalFilesystem(dirname(path)),
-    basename(path),
+    new LocalFilesystem(dirname),
+    basename,
     options
   );
 }

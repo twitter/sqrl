@@ -15,6 +15,16 @@ export class LocalFilesystem extends Filesystem {
   }
 }
 
+export function pathDirname(filePath: string) {
+  throw new Error('Not implemented')
+}
+export function pathBasename(filePath: string) {
+  throw new Error('Not implemented')
+}
+export function pathJoin(paths: string[]) {
+  return paths.join('/');
+}
+
 export function splitPath(filePath: string): {
   dirname: string,
   basename: string

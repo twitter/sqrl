@@ -26,6 +26,16 @@ export class LocalFilesystem extends Filesystem {
   }
 }
 
+export function pathDirname(filePath: string) {
+    return path.dirname(filePath);
+}
+export function pathBasename(filePath: string) {
+    return path.basename(filePath);
+}
+export function pathJoin(...paths: string[]) {
+    return path.join(...paths);
+}
+
 export function splitPath(filePath: string): {
     dirname: string,
     basename: string

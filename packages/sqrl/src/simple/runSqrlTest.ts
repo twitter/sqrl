@@ -6,15 +6,13 @@
 import { SimpleManipulator } from "./SimpleManipulator";
 import { createSimpleContext } from "../api/ctx";
 import { SqrlTest } from "../testing/SqrlTest";
-import {  Filesystem } from "../api/filesystem";
+import { Filesystem, EmptyFilesystem } from "../api/filesystem";
 import { buildTestInstance } from "../testing/runSqrlTest";
 import { Instance, Execution } from "../api/execute";
-import * as path from "path";
 import { Logger } from "../api/log";
 import { Config } from "../api/config";
 import { FunctionCostData } from "../function/Instance";
 import { invariant } from "sqrl-common";
-import { LocalFilesystem } from "../node/LocalFilesystem";
 
 export async function runSqrlTest(
   sqrl: string,
@@ -57,7 +55,7 @@ export async function runSqrlTest(
   }
 
   const filesystem =
-    options.filesystem || new LocalFilesystem(path.join(__dirname, ".."));
+    options.filesystem || new EmptyFilesystem();
 
   const test = new SqrlTest(instance._instance, {
     manipulatorFactory: () => new SimpleManipulator(),
