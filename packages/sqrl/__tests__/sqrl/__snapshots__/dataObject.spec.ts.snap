@@ -136,7 +136,7 @@ Object {
   "Zero": "function () {
   return bluebird.resolve(0);
 }",
-  "ast:1a23fabb79c380d8c89f2ebf47dc38f5": "function () {
+  "ast:1417de40896f44775ffe300dc51c74c5": "function () {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -147,18 +147,17 @@ Object {
     )
   );
 }",
-  "ast:29bdc23a8d3d08f7a41eac24469745cd": "function () {
-  return bluebird.resolve(
-    functions._assertCmp(
-      this,
-      functions._createMap(\\"a\\", [1, 2]),
-      \\"=\\",
-      functions._createMap(\\"a\\", [1, 2]),
-      'line 45\\\\n  ASSERT {\\"a\\": [1, 2]} = { \\"a\\": [1, 2] };\\\\n  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\\\n'
-    )
+  "ast:6aabb51126bfd37252f23213f39c4676": "function () {
+  const p0 = bluebird.resolve(\\"=\\");
+  const p1 = bluebird.resolve({ a: 6 });
+  const p2 = bluebird.resolve(
+    'line 47\\\\n  ASSERT C = {\\"a\\": 6};\\\\n  ^^^^^^^^^^^^^^^^^^^\\\\n'
   );
+  return bluebird
+    .all([bluebird.resolve(this), this.fetch(\\"C\\"), p0, p1, p2])
+    .spread(functions._assertCmp);
 }",
-  "ast:32448b1b4f1dc98af01fcc5da4e18d21": "function () {
+  "ast:86de5da6a621d67aca0a5a645cc454a2": "function () {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -169,7 +168,18 @@ Object {
     )
   );
 }",
-  "ast:c0e3357795978a9e8cb0b51837341294": "function () {
+  "ast:decae6d5c0d938836df4f140215ba419": "function () {
+  return bluebird.resolve(
+    functions._assertCmp(
+      this,
+      functions._createMap(\\"a\\", [1, 2]),
+      \\"=\\",
+      functions._createMap(\\"a\\", [1, 2]),
+      'line 45\\\\n  ASSERT {\\"a\\": [1, 2]} = { \\"a\\": [1, 2] };\\\\n  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\\\n'
+    )
+  );
+}",
+  "ast:f10850eaa2b96f3aa046a713484c545c": "function () {
   return bluebird.resolve(
     functions._assertCmp(
       this,
@@ -179,16 +189,6 @@ Object {
       'line 44\\\\n  ASSERT {\\"a\\": {}} = { \\"a\\": {} };\\\\n  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\\\n'
     )
   );
-}",
-  "ast:dda3b0a11824f6cf46ef1e779ac9613e": "function () {
-  const p0 = bluebird.resolve(\\"=\\");
-  const p1 = bluebird.resolve({ a: 6 });
-  const p2 = bluebird.resolve(
-    'line 47\\\\n  ASSERT C = {\\"a\\": 6};\\\\n  ^^^^^^^^^^^^^^^^^^^\\\\n'
-  );
-  return bluebird
-    .all([bluebird.resolve(this), this.fetch(\\"C\\"), p0, p1, p2])
-    .spread(functions._assertCmp);
 }",
   "bool(:)": "function () {
   return bluebird.resolve(true);

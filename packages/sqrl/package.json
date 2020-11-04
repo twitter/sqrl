@@ -47,7 +47,7 @@
     "jsonschema": "^1.2.4",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.31",
-    "murmur-128": "^0.2.1",
+    "murmurhash3.js": "git+https://github.com/qix/murmurHash3.js.git",
     "node-nice": "^0.0.1",
     "prettier": "^2.1.2",
     "sqrl-common": "^0.6.4"

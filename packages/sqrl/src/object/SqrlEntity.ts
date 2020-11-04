@@ -99,11 +99,11 @@ export default class SqrlEntity extends SqrlObject {
     const basicFeatureValues = await nice(() =>
       SqrlObject.ensureBasic(featureValues)
     );
-    let featuresHash: Uint8Array;
+    let featuresHash: Buffer;
     if (featureValues.length) {
       featuresHash = await murmurhashJson(basicFeatureValues);
     } else {
-      featuresHash = new Uint8Array(16);
+      featuresHash = Buffer.alloc(16);
     }
     return new SqrlKey(
       ctx.requireDatabaseSet(),

@@ -67,9 +67,12 @@ export async function runSqrlTest(
   }
   const rv = await test.run(ctx, sqrl);
 
+  for (const execution of rv.executions) {
+    execution.manipulator.throwFirstError();
+  }
+
   const lastExecution = rv.executions[rv.executions.length - 1];
   const lastManipulator = lastExecution.manipulator as SimpleManipulator;
-  lastManipulator.throwFirstError();
 
   return {
     ...rv,

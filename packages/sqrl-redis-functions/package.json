@@ -60,9 +60,9 @@
     "fast-stable-stringify": "^1.0.0",
     "ioredis": "^4.19.1",
     "moment": "^2.24.0",
-    "murmur-128": "^0.2.1",
-    "sqrl": "^0.6.6-beta.4",
-    "sqrl-common": "^0.6.6-beta.4"
+    "murmurhash3.js": "git+https://github.com/qix/murmurHash3.js.git",
+    "sqrl": "^0.6.6-beta.5",
+    "sqrl-common": "^0.6.6-beta.5"
   },
   "gitHead": "d6f4789442ac2e1dea7b1f39b87c6db3395fd815"
 }

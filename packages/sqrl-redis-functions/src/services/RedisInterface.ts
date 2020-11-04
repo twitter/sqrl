@@ -1,5 +1,5 @@
 import { Context, DatabaseSet } from "sqrl";
-import murmur128x64 = require("murmur-128");
+import * as murmurJs from "murmurhash3.js";
 
 export interface RateLimitOptions {
     maxAmount: number;
@@ -58,6 +58,6 @@ export interface RateLimitOptions {
         }
       })
     ];
-    const rv = murmur128x64(JSON.stringify(parts));
+    const rv = murmurJs.x64.hash128(JSON.stringify(parts));
     return Buffer.from(rv);
   }

@@ -5,7 +5,10 @@ for (let i = 0; i < 256; i++) {
     hexDigits.push(hexOctet);
 }
 
-export function arrayToHex(data: Uint8Array): string {
+export function arrayToHex(data: Buffer | Uint8Array): string {
+  if (data instanceof Buffer) {
+    return data.toString('hex');
+  }
   const digits = new Array(data.byteLength);
   for (let i = 0; i < data.length; i++) {
       digits.push(hexDigits[data[i]]);
