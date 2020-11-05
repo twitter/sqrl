@@ -7,7 +7,6 @@ export * from "./RenderedSpan";
 export * from "./SqrlBoxed";
 export * from "./SqrlObject";
 
-export * from "./arrayToHex";
 export * from "./bufferToHexEncodedAscii";
 export * from "./compare";
 export * from "./emptyFunction";
