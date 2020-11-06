@@ -3,19 +3,12 @@
 // http://www.apache.org/licenses/LICENSE-2.0
 
 const base = require("./jest.base");
+const glob = require("glob");
+const path = require("path");
 
 module.exports = {
   ...base,
-  projects: [
-    "packages/sqrl-cli-functions/jest.config.js",
-    "packages/sqrl-cli/jest.config.js",
-    "packages/sqrl-common/jest.config.js",
-    "packages/sqrl/jest.config.js",
-    "packages/sqrl-jsonpath/jest.config.js",
-    "packages/sqrl-load-functions/jest.config.js",
-    "packages/sqrl-redis-functions/jest.config.js",
-    "packages/sqrl-text-functions/jest.config.js"
-  ],
+  projects: glob.sync(path.join(__dirname, 'packages/*/jest.config.js')),
   coverageDirectory: "<rootDir>/coverage/",
   testRegex: `.*/__tests__/.*\\.spec\\.ts$`
 };
