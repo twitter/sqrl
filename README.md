@@ -1,4 +1,10 @@
-# [SQRL](https://twitter.github.io/sqrl/) &middot; [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/twitter/sqrl/blob/master/LICENSE) [![npm version](https://img.shields.io/npm/v/sqrl.svg?style=flat)](https://www.npmjs.com/package/sqrl) [![Build Status](https://travis-ci.org/twitter/sqrl.svg?branch=master)](https://travis-ci.org/twitter/sqrl) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/twitter/sqrl/blob/master/CONTRIBUTING.md)
+# SQRL
+
+## No longer maintained by Twitter
+
+This source repository is no longer actively maintained. Please find the maintained version at [github.com/qix/sqrl](https://github.com/qix/sqrl)
+
+## What is SQRL?
 
 The Smyte Query and Rules Language (SQRL) is a Safe, Stateful Rules Language for Event Streams
 
