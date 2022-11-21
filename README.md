@@ -2,7 +2,7 @@
 
 ## No longer maintained by Twitter
 
-This source repository is no longer actively maintained. Please find the maintained version at [github.com/qix/sqrl](https://github.com/qix/sqrl)
+This source repository is no longer actively maintained. Please find the maintained version at [github.com/sqrl-lang/sqrl](https://github.com/sqrl-lang/sqrl)
 
 ## What is SQRL?
 
